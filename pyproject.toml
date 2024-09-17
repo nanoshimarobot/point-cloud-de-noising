@@ -1,8 +1,27 @@
-[build-system]
-# AVOID CHANGING REQUIRES: IT WILL BE UPDATED BY PYSCAFFOLD!
-requires = ["setuptools>=46.1.0", "setuptools_scm[toml]>=5", "wheel"]
-build-backend = "setuptools.build_meta"
+[tool.poetry]
+name = "point-cloud-de-noising"
+version = "0.1.0"
+description = ""
+authors = ["nanoshimarobot <shimada.toyozo.lf@tut.jp>"]
+readme = "README.md"
 
-[tool.setuptools_scm]
-# See configuration details in https://github.com/pypa/setuptools_scm
-version_scheme = "no-guess-dev"
+[tool.poetry.dependencies]
+python = "^3.10"
+torch = {version = "2.1.1", source = "torch_cu121"}
+torchvision = {version = "0.16.1", source = "torch_cu121"}
+torchaudio = {version = "2.1.1", source = "torch_cu121"}
+pytorch-lightning = "^2.4.0"
+numpy = "1.26.4"
+h5py = "^3.11.0"
+tensorboardx = "^2.6.2.2"
+tensorboard = "^2.17.1"
+
+
+[[tool.poetry.source]]
+name = "torch_cu121"
+url = "https://download.pytorch.org/whl/cu121"
+priority = "explicit"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
