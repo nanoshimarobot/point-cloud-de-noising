@@ -124,6 +124,11 @@ class WeatherNet(pl.LightningModule):
         loss, logits, predictions = self.shared_step(distance, reflectivity, labels)
 
         self.log("val_loss", loss)
+        val_acc = Accuracy('multiclass',num_classes=4)
+        self.log("val_acc", val_acc(predictions.view(-1, 4).to("cpu"), labels.view(-1, 4).to("cpu")))
+        # print(f"pred dev : {predictions.device}, label dev : {labels.device}")
+        # print(f"trans pred dev : {predictions.view(-1, 4).device}, trans label dev : {labels.view(-1, 4).device}")
+        # raise ValueError("unko")
         # self.val_f1(predictions, labels)
         # self.log("val_f1", self.val_f1, on_step=False, on_epoch=True)
 
@@ -133,8 +138,8 @@ class WeatherNet(pl.LightningModule):
     def test_step(self, batch, batch_idx):
         distance, reflectivity, labels = batch
         loss, logits, predictions = self.shared_step(distance, reflectivity, labels)
-        self.log("test_acc", self.accuracy(predictions.view(-1, 4), labels.view(-1, 4)))
-        self.log("test_ap", self.accuracy(predictions.view(-1, 4), labels.view(-1, 4)))
+        self.log("test_acc", self.accuracy(predictions.view(-1, 4), labels.view(-1, 4)), on_step=True)
+        # self.log("test_ap", self.average_precision(predictions.view(-1), labels.view(-1)), on_step=True)
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), betas=(0.9, 0.999), eps=1e-8)
