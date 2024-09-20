@@ -2,6 +2,7 @@ import pytorch_lightning as pl
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
 # from pytorch_lightning.metrics.functional import accuracy, average_precision
 from torchmetrics import Accuracy, AveragePrecision
 
@@ -34,6 +35,11 @@ class WeatherNet(pl.LightningModule):
         # self.val_f1 = F1(num_classes)
         # self.val_hamming = HammingDistance()
 
+        self.accuracy = Accuracy(task="multiclass", num_classes=num_classes)
+        self.average_precision = AveragePrecision(
+            task="multiclass", num_classes=num_classes
+        )
+
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
@@ -43,6 +49,7 @@ class WeatherNet(pl.LightningModule):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
 
+    # batch size * 32
     def forward(self, distance, reflectivity):
         """Forward pass of Weathernet
 
@@ -117,7 +124,6 @@ class WeatherNet(pl.LightningModule):
         loss, logits, predictions = self.shared_step(distance, reflectivity, labels)
 
         self.log("val_loss", loss)
-
         # self.val_f1(predictions, labels)
         # self.log("val_f1", self.val_f1, on_step=False, on_epoch=True)
 
@@ -127,9 +133,8 @@ class WeatherNet(pl.LightningModule):
     def test_step(self, batch, batch_idx):
         distance, reflectivity, labels = batch
         loss, logits, predictions = self.shared_step(distance, reflectivity, labels)
-
-        self.log("test_acc", Accuracy(predictions, labels))
-        self.log("test_ap", AveragePrecision(predictions, labels))
+        self.log("test_acc", self.accuracy(predictions.view(-1, 4), labels.view(-1, 4)))
+        self.log("test_ap", self.accuracy(predictions.view(-1, 4), labels.view(-1, 4)))
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), betas=(0.9, 0.999), eps=1e-8)
