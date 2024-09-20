@@ -12,7 +12,7 @@ NUMBER_GPUS = 1
 def main() -> None:
     DATASET_PATH = "./data"
     logger = TensorBoardLogger("tb_logs", name="WeatherNet")
-    model = WeatherNet()
+    model = WeatherNet(4)
 
     data_module = PointCloudDataModule(
         os.path.join(DATASET_PATH, "train"),
@@ -24,13 +24,14 @@ def main() -> None:
         logger=logger,
         overfit_batches=2,
         # progress_bar_refresh_rate=30,
-        max_epochs=30,
+        max_epochs=50,
         # flush_logs_every_n_steps=1,
         log_every_n_steps=1,
         # gpus=1,
     )
 
     trainer.fit(model, data_module)
+    trainer.test(model, data_module)
 
 
 if __name__ == "__main__":
