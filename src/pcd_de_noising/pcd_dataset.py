@@ -7,6 +7,7 @@ from torch.utils.data import DataLoader, Dataset
 
 DATA_KEYS = ["distance_m_1", "intensity_1"]
 LABEL_KEY = "labels_1"
+XYZ_KEYS = ["sensorX_1", "sensorY_!", "sensorZ_1"]
 
 
 class PCDDataset(Dataset):
