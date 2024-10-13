@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader, Dataset
 
 DATA_KEYS = ["distance_m_1", "intensity_1"]
 LABEL_KEY = "labels_1"
-XYZ_KEYS = ["sensorX_1", "sensorY_!", "sensorZ_1"]
+XYZ_KEYS = ["sensorX_1", "sensorY_1", "sensorZ_1"]
 
 
 class PCDDataset(Dataset):
@@ -48,8 +48,10 @@ class PCDDataset(Dataset):
         # TODO: Discard 0s? Not going to learn anything useful from them
         #   Might teach the model that adverse weather isn't adverse weather,
         #   because it's labeled as nothing
-        label = torch.where(label == 0, torch.tensor(99), label)
-        label -= 99
+        label = torch.where(label == 0, torch.tensor(100), label)
+        label -= 100
+
+        # distance = 
 
         assert (
             label.shape == distance.shape[1:]
