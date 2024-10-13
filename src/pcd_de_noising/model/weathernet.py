@@ -21,13 +21,13 @@ class WeatherNet(pl.LightningModule):
 
     def __init__(self, num_classes=3):
         super().__init__()
-        self.lila1 = LiLaBlock(2, 96, modified=True)
-        self.lila2 = LiLaBlock(96, 128, modified=True)
-        self.lila3 = LiLaBlock(128, 256, modified=True)
-        self.lila4 = LiLaBlock(256, 256, modified=True)
+        self.lila1 = LiLaBlock(2, 32, modified=True)
+        self.lila2 = LiLaBlock(32, 64, modified=True)
+        self.lila3 = LiLaBlock(64, 96, modified=True)
+        self.lila4 = LiLaBlock(96, 96, modified=True)
         self.dropout = nn.Dropout2d()
-        self.lila5 = LiLaBlock(256, 128, modified=True)
-        self.classifier = nn.Conv2d(128, num_classes, kernel_size=1)
+        self.lila5 = LiLaBlock(96, 64, modified=True)
+        self.classifier = nn.Conv2d(64, num_classes, kernel_size=1)
 
         # Metrics
         # self.train_f1 = F1(num_classes)
